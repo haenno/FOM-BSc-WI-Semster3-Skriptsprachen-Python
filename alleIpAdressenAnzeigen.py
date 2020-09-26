@@ -16,7 +16,7 @@ for b1 in range((min),(max+1)):
 datei.close()
 print ("done")
 
-#Todo: viel zu langsam, threading half im ersten versuch auch nicht. 
+# Todo: viel zu langsam, threading half im ersten versuch auch nicht. 
 #      später quasi unmöglich gut mit zu arbeiten...
 #    besser: random ip erzeugen, mit arbeiten, ergebnis  in liste/datei/db schreiben
 #             + bei jede rnd erzeugten ip, prüfen ob schon benutzt, falls ja verwerfen, nächste
