@@ -1,4 +1,4 @@
-# 1. Vorlesung mit Python (3. zu Skriptsprachen insges. -- 26.09.2020)
+# 1. Vorlesung mit Python (3. zu Skriptsprachen insges. -- 26.09.2020 - 1. PDF dazu)
 
 x = input ("Ihr Name? ")
 X = "Hallo " + x
