@@ -1,9 +1,3 @@
-import random 
-import socket
-import time
-import threading
-from queue import Queue
-
 def rndIP():
     min = 1
     max = 254
@@ -31,6 +25,13 @@ def threader():
 print ("\n\n\n...ooooOO> Zufallswebseiten-Tours <OOoooo...\nSuchen und öffnen zufälliger Webseiten/-server...\n\n")
 while True:
     input ("\nScan starten?     -->      Ja: Anykey     -->      Nein: CTRL+C")
+    
+    from queue import Queue
+    import random 
+    import socket
+    import time
+    import threading
+
     socket.setdefaulttimeout(0.75)
     print_lock = threading.Lock()
 
@@ -44,7 +45,7 @@ while True:
     q = Queue()
     startTime = time.time()
 
-    for x in range(20):
+    for x in range(80):
         t = threading.Thread(target = threader)
         t.daemon = True
         t.start()
@@ -55,6 +56,7 @@ while True:
 
     q.join()
     print('       ==> Scandauer in Sekunden:', time.time() - startTime)
+    input("Beliebige Taste für Abschluss...") 
 
 
 # ToDo:
