@@ -5,7 +5,7 @@ def rndIP():
     return str(str(int(random.uniform(min,max)))+seperator+str(int(random.uniform(min,max)))+seperator+str(int(random.uniform(min,max)))+seperator+str(int(random.uniform(min,max))))
 
 def portscan(targetIp):
-   s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+   s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #tcp
    try:
       con = s.connect((targetIp, 80))
       with print_lock:
