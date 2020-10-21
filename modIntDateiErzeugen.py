@@ -22,5 +22,5 @@ def createRndIntFile(fileName, anz):
         print("Datei erfolgreich erstellt.")
     except ValueError as error:
         print(" ==> Fehler: Datei mit Zufallsinhalt erzeugen fehlgeschlagen! \n   -> ", error)
-        
+
 createRndIntFile(input("Dateiname? "), input("Anzahl Zufallszahlen? ")) 
