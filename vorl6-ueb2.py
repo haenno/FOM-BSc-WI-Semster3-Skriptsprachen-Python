@@ -3,91 +3,103 @@
 
 from tkinter import *
 import random
+from time import sleep
 
-ROWS = 20
+ROWS = 15
 COLS = ROWS
 PADDING = 1
-BOXSIZE = 25
+BOXSIZE = 30
 
 def game_over():
-    global SPIELFELD
+    global GRID, GAMEOVER
     for i in range(ROWS):
         for j in range(COLS):
-            SPIELFELD[i][j] = 9
+            GRID[i][j] = 9
+    GAMEOVER = True
 
 def new_target():
-    global SPIELFELD
+    global GRID
    
-    try_target = True
-    while try_target: 
+    need_new_target = True
+    while need_new_target: 
         new_target_y = int(random.uniform(0,COLS))
         new_target_x = int(random.uniform(0,ROWS))
-        if SPIELFELD[new_target_y][new_target_x] == 0:
-            SPIELFELD[new_target_y][new_target_x] = 2
-            try_target = False
+        if GRID[new_target_y][new_target_x] == 0:
+            GRID[new_target_y][new_target_x] = 2
+            need_new_target = False
 
 def set_player(x,y):
-    global SPIELFELD
+    global GRID
     
     for i in range(ROWS):
         for j in range(COLS):
-            if SPIELFELD[i][j] == 3: 
-                SPIELFELD[i][j] = 0
+            if GRID[i][j] == 3: 
+                GRID[i][j] = 0
 
-    SPIELFELD[x][y] = 3
+    GRID[x][y] = 3
 
 def add_trail():
-    global TRAIL, SPIELFELD
+    global TRAIL, GRID
     TRAIL.insert(0,(int(get_player_pos("x")),int(get_player_pos("y"))))
 
 def move_trail():
-    global TRAIL, SPIELFELD
+    global TRAIL, GRID
     if len(TRAIL)>0:
         delete_trailend_XY = TRAIL.pop()
-        SPIELFELD[delete_trailend_XY[0]][delete_trailend_XY[1]] = 0
+        GRID[delete_trailend_XY[0]][delete_trailend_XY[1]] = 0
         TRAIL.insert(0,(get_player_pos("x"), get_player_pos("y")))
       
 
 def movement_logic(new_player_x, new_player_y):
-    print("TRAIL move is: %s" % TRAIL)
-    if new_player_x < 0 or new_player_x >= ROWS or new_player_y < 0 or new_player_y >= COLS or SPIELFELD[new_player_x][new_player_y] == 1:
+    global ROUND_MOVED
+    if new_player_x < 0 or new_player_x >= ROWS or new_player_y < 0 or new_player_y >= COLS or GRID[new_player_x][new_player_y] == 1:
         game_over()
     else: 
-        if SPIELFELD[new_player_x][new_player_y] == 2:
-            add_trail()
-            new_target()
-        else:
-            move_trail()  
-        set_player(new_player_x,new_player_y)
+        if ROUND_MOVED == False:
+            if GRID[new_player_x][new_player_y] == 2:
+                add_trail()
+                new_target()
+            else:
+                move_trail()  
+            set_player(new_player_x,new_player_y)
+            ROUND_MOVED = True
             
 
 def get_player_pos(axis):
     for i in range(ROWS):
         for j in range(COLS):
-            if SPIELFELD[i][j] == 3:
+            if GRID[i][j] == 3:
                 if axis == "x":
                     return int(i)
                 elif axis == "y":
                     return int(j)
 
 def input_up():
-    movement_logic(get_player_pos("x"), get_player_pos("y")-1)
-    print_field()
+    global PLAYER_DIRECTION
+    PLAYER_DIRECTION = 1 # 1=north, 2=south, 3=west, 4=east
+    movement_logic (get_player_pos("x"), get_player_pos("y")-1)
+    #print_field()
 
 def input_left():
+    global PLAYER_DIRECTION
+    PLAYER_DIRECTION = 3 # 1=north, 2=south, 3=west, 4=east
     movement_logic (get_player_pos("x")-1, get_player_pos("y"))
-    print_field()
+    #print_field()
 
 def input_right():
+    global PLAYER_DIRECTION
+    PLAYER_DIRECTION = 4 # 1=north, 2=south, 3=west, 4=east
     movement_logic (get_player_pos("x")+1, get_player_pos("y"))
-    print_field()
+    #print_field()
 
 def input_down():
+    global PLAYER_DIRECTION
+    PLAYER_DIRECTION = 2 # 1=north, 2=south, 3=west, 4=east
     movement_logic (get_player_pos("x"), get_player_pos("y")+1)
-    print_field()
+    #print_field()
 
 def print_field():
-    global SPIELFELD
+    global GRID
     cnv.delete("all")
     for i in range(ROWS):
         x = (i*(BOXSIZE+PADDING))+BOXSIZE
@@ -97,22 +109,22 @@ def print_field():
             y2= y + BOXSIZE
 
             #set marker for trail
-            if (i,j) in TRAIL and SPIELFELD[i][j] != 3:
-                SPIELFELD[i][j] = 1
+            if (i,j) in TRAIL and GRID[i][j] != 3:
+                GRID[i][j] = 1
 
-            if SPIELFELD[i][j] == 0:
+            if GRID[i][j] == 0:
                 #empty
                 color = "black"
-            elif SPIELFELD[i][j] == 1:
+            elif GRID[i][j] == 1:
                 #playertrail
                 color = "white"
-            elif SPIELFELD[i][j] == 2:
+            elif GRID[i][j] == 2:
                 #target
                 color = "green"
-            elif SPIELFELD[i][j] == 3:
+            elif GRID[i][j] == 3:
                 #player
                 color = "yellow"
-            elif SPIELFELD[i][j] == 9:
+            elif GRID[i][j] == 9:
                 #gameover
                 color = "red"                
             else:
@@ -120,7 +132,8 @@ def print_field():
                 color = "pink"
 
             cnv.create_rectangle(x,y,x2,y2,fill=color,outline="")
-    print("TRAIL print is: %s" % TRAIL)
+    cnv.update()
+    cnv.update_idletasks()    
 
 def new_field():
     the_new_field =[]
@@ -131,6 +144,19 @@ def new_field():
         the_new_field.append(row)
     return the_new_field
 
+def move_player():
+    try:
+        if PLAYER_DIRECTION == 1:
+            movement_logic (get_player_pos("x"), get_player_pos("y")-1)
+        elif PLAYER_DIRECTION == 2:
+            movement_logic (get_player_pos("x"), get_player_pos("y")+1)
+        elif PLAYER_DIRECTION == 3:
+            movement_logic (get_player_pos("x")-1, get_player_pos("y"))
+        else: # must be 4 then
+            movement_logic (get_player_pos("x")+1, get_player_pos("y"))
+    except:
+
+        pass
 
 gui = Tk()
 gui.title("Snake light...")
@@ -153,13 +179,35 @@ button_right.pack(side=RIGHT)
 button_down.pack(side=BOTTOM)
 
 
-# init and prepare game
-TRAIL = list()
+while True:
+    # init and prepare game
+    TRAIL = list()
+    PLAYER_DIRECTION = 4 # 1=north, 2=south, 3=west, 4=east
+    ROUND_MOVED = False
+    GAMEOVER = False
+    GAMERUNNING = True
+    GRID = new_field() # create new playfield
+    GRID[0][int(round(COLS/2,0))] = 3 # set players dot left and in the middle
+    new_target() # set frist target
+    print_field() # print first field
 
-SPIELFELD = new_field() # create new playfield
-SPIELFELD[int(round(ROWS/2,0))][int(round(COLS/2,0))] = 3 # set players dot in the middle
-new_target() # set frist target
-print_field() # print first field
+    # rest is started by the 4 directional buttons
+    #mainloop()
+    while GAMERUNNING:
+        ROUND_MOVED = False
 
-# rest is started by the 4 directional buttons
-mainloop()
+        cnv.update()
+        cnv.update_idletasks()    
+        
+        if ROUND_MOVED == False: 
+            move_player()
+
+        print_field()
+        sleep(0.5)
+
+        if GAMEOVER == True:
+            GAMERUNNING = False
+          
+            sleep(3.0)       
+            break
+
