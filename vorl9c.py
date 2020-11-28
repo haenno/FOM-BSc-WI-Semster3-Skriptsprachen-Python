@@ -3,7 +3,7 @@
 # Übung: +Histogramme anzeigen
 
 import cv2
-from matplotlib import pyplot as plt
+from matplotlib import pyplot
 
 scale     = 1.0
 rotation  = 0
@@ -33,21 +33,24 @@ while True:
 
     if display_histogram > 0:
         if display_histogram == 1: # grey
-            plt.hist(image.ravel(), 256, [0,256])
+            pyplot.hist(image.ravel(), 256, [0,256])
         
         if display_histogram == 2: # rgb
             color = ('b', 'g', 'r')
             for i, col in enumerate(color):
-                histr = cv2.calcHist([image], [i], None, [256], [0,256])
-                plt.plot(histr, color =col)
-                plt.xlim([0,256])
+                histr = cv2.calcHist([image], [i], None, [256], [0, 256])
+                pyplot.plot(histr, color = col)
+                pyplot.xlim([0,256])
 
-        plt.show()
-        display_histogram = 0      # reset histogram
+        pyplot.show()
 
+        # pyplot.show() blocks program
+        # > on close, reset histogram, reload image
+        display_histogram = 0      
         image = load_image()
         cv2.imshow(filename, image)
-    
+
+
     key_pressed = cv2.waitKey()
     if key_pressed == 27:         # esc: close app
         cv2.destroyWindow(filename)
@@ -65,4 +68,4 @@ while True:
     elif key_pressed == 50:       # 2: histogram rgb
         display_histogram = 2
    
-    print ("Skalierung: %0.0f%%, Rotation: %d°" % ((scale*100),rotation))
+    print ("Skalierung: %0.0f%%, Rotation: %d°" % ((scale * 100), rotation))
